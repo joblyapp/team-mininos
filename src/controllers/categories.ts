@@ -17,10 +17,33 @@ async function createCategory(req: Request, res: Response): Promise<void>{
     try{
         const body = matchedData(req);
         const data = await categoriesModel.create(body);
+        res.status(201)
         res.send(data);
-    }catch(error){
-        handleHttpError(res, "ERROR_CREATE_CATEGORY");
+    }catch(error:any){
+        handleHttpError(res, error.message);
     }
 }
 
-export {getCategories, createCategory};
+async function updateCategory(req: Request, res: Response): Promise<void>{
+    try{
+        const {id, ...body} = matchedData(req);
+        const data = await categoriesModel.findOneAndUpdate(id,body, {new:true});
+        res.send(data);
+    }catch(error:any){
+        handleHttpError(res, error.message);
+    }
+}
+
+async function deleteCategory(req: Request, res: Response): Promise<void>{
+    try{
+        const bodyResponse = matchedData(req);
+        const data = await categoriesModel.deleteOne({_id: bodyResponse.id})
+        if (data.deletedCount !==0)
+            res.status(204);
+        res.send(data);
+    }catch(error:any){
+        handleHttpError(res, error.message);
+    }
+}
+
+export {getCategories, createCategory, updateCategory, deleteCategory};
