@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { matchedData } from "express-validator/src/matched-data";
+import { trusted } from "mongoose";
 import categoriesModel from "../models/categories";
 import handleHttpError from "../utils/handleError";
 
@@ -28,7 +29,8 @@ async function updateCategory(req: Request, res: Response): Promise<void>{
     try{
         const {id, ...body} = matchedData(req);
         const data = await categoriesModel.findOneAndUpdate(id,body, {new:true});
-        res.send(data);
+        res.status(204);
+        res.send({});
     }catch(error:any){
         handleHttpError(res, error.message);
     }
@@ -37,10 +39,11 @@ async function updateCategory(req: Request, res: Response): Promise<void>{
 async function deleteCategory(req: Request, res: Response): Promise<void>{
     try{
         const bodyResponse = matchedData(req);
-        const data = await categoriesModel.deleteOne({_id: bodyResponse.id})
-        if (data.deletedCount !==0)
-            res.status(204);
-        res.send(data);
+        const data = await categoriesModel.deleteOne({_id: bodyResponse.id});
+        
+        (data.deletedCount !==0) ? res.status(204) : res.status(404)
+        
+        res.send({});
     }catch(error:any){
         handleHttpError(res, error.message);
     }

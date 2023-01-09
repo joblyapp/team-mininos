@@ -154,7 +154,5 @@ const options: OAS3Options = {
     apis: ["./routes/*.ts"],
 };
 
-console.log(options)
-
 const openApiConfiguration = swaggerJSDoc(options);
 export default openApiConfiguration;
